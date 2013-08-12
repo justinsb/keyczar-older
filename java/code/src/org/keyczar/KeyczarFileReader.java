@@ -19,6 +19,7 @@ package org.keyczar;
 import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.i18n.Messages;
 import org.keyczar.interfaces.KeyczarReader;
+import org.keyczar.util.Util;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +65,7 @@ public class KeyczarFileReader implements KeyczarReader {
       byte[] contents = new byte[(int) file.length()];
       file.read(contents);
       file.close();
-      return new String(contents);
+      return new String(contents, Util.UTF_8);
     } catch (IOException e) {
       throw new KeyczarException(
           Messages.getString("KeyczarFileReader.FileError", filename), e);

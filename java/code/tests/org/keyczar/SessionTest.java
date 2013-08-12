@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.util.Base64Coder;
+import org.keyczar.util.Util;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -59,12 +60,12 @@ public class SessionTest extends TestCase {
     byte[] sessionMaterial = sessionEncrypter.getSessionMaterial();
     String sessionMaterialString = Base64Coder.encodeWebSafe(sessionMaterial);
     LOG.debug(String.format("Encoded session material: %s", sessionMaterialString));
-    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes());
+    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes(Util.UTF_8));
     String ciphertextString = Base64Coder.encodeWebSafe(ciphertext);
     LOG.debug(String.format("Encoded ciphertext: %s", ciphertextString));
     sessionDecrypter = new SessionDecrypter(privateKeyDecrypter, sessionMaterial);
     byte[] plaintext = sessionDecrypter.decrypt(ciphertext);
-    String decrypted = new String(plaintext);
+    String decrypted = new String(plaintext, Util.UTF_8);
     assertEquals(input, decrypted);
 
     // Try encrypting a bigger input under the same session key
@@ -89,14 +90,14 @@ public class SessionTest extends TestCase {
     sessionDecrypter =
       new SessionDecrypter(privateKeyDecrypter, sessionMaterial);
     byte[] plaintext = sessionDecrypter.decrypt(sessionCiphertext);
-    String decrypted = new String(plaintext);
+    String decrypted = new String(plaintext, Util.UTF_8);
     assertEquals(input, decrypted);
   }
 
   @Test
   public final void testWrongSession() throws KeyczarException {
     byte[] sessionMaterial = sessionEncrypter.getSessionMaterial();
-    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes());
+    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes(Util.UTF_8));
     sessionDecrypter =
       new SessionDecrypter(privateKeyDecrypter, sessionMaterial);
 
@@ -116,12 +117,12 @@ public class SessionTest extends TestCase {
 
   @Test
   public final void testCrypterDecryptsOwnCiphertext() throws KeyczarException {
-    byte[] ciphertext = sessionCrypter.encrypt(input.getBytes());
+    byte[] ciphertext = sessionCrypter.encrypt(input.getBytes(Util.UTF_8));
     String ciphertextString = Base64Coder.encodeWebSafe(ciphertext);
     LOG.debug(String.format("Encoded ciphertext: %s", ciphertextString));
 
     byte[] plaintext = sessionCrypter.decrypt(ciphertext);
-    String decrypted = new String(plaintext);
+    String decrypted = new String(plaintext, Util.UTF_8);
     assertEquals(input, decrypted);
 
     // Try encrypting a bigger input under the same session key
@@ -139,9 +140,9 @@ public class SessionTest extends TestCase {
     ImportedKeyReader importedKeyReader = new ImportedKeyReader(aesKey);
     Crypter symmetricCrypter = new Crypter(importedKeyReader);
 
-    byte[] ciphertextResponse = symmetricCrypter.encrypt(input.getBytes());
+    byte[] ciphertextResponse = symmetricCrypter.encrypt(input.getBytes(Util.UTF_8));
     byte[] plaintext = sessionCrypter.decrypt(ciphertextResponse);
-    String decrypted = new String(plaintext);
+    String decrypted = new String(plaintext, Util.UTF_8);
 
     assertEquals(input, decrypted);
 
@@ -155,14 +156,14 @@ public class SessionTest extends TestCase {
   public final void testCrypterPair() throws KeyczarException {
      SessionCrypter localCrypter = new SessionCrypter(publicKeyEncrypter);
 
-     byte[] encrypted = localCrypter.encrypt(input.getBytes());
+     byte[] encrypted = localCrypter.encrypt(input.getBytes(Util.UTF_8));
      byte[] sessionMaterial = localCrypter.getSessionMaterial();
 
      SessionCrypter remoteCrypter =
          new SessionCrypter(privateKeyDecrypter, sessionMaterial);
 
      byte[] decrypted = remoteCrypter.decrypt(encrypted);
-     assertTrue(Arrays.equals(input.getBytes(), decrypted));
+     assertTrue(Arrays.equals(input.getBytes(Util.UTF_8), decrypted));
 
      encrypted = remoteCrypter.encrypt(bigInput);
      decrypted = localCrypter.decrypt(encrypted);

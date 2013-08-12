@@ -28,6 +28,7 @@ import org.keyczar.interfaces.DecryptingStream;
 import org.keyczar.interfaces.KeyczarReader;
 import org.keyczar.interfaces.VerifyingStream;
 import org.keyczar.util.Base64Coder;
+import org.keyczar.util.Util;
 
 import java.nio.ByteBuffer;
 
@@ -180,7 +181,7 @@ public class Crypter extends Encrypter {
    * not web-safe Base64 encoded, or a JCE error occurs.
    */
   public String decrypt(String ciphertext) throws KeyczarException {
-    return new String(decrypt(Base64Coder.decodeWebSafe(ciphertext)));
+    return new String(decrypt(Base64Coder.decodeWebSafe(ciphertext)), Util.UTF_8);
   }
 
   @Override

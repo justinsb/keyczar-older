@@ -28,6 +28,8 @@ import org.keyczar.exceptions.BadVersionException;
 import org.keyczar.exceptions.KeyNotFoundException;
 import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.exceptions.ShortSignatureException;
+import org.keyczar.Signer;
+import org.keyczar.util.Util;
 
 /**
  * Tests Signer class for signing and verifying with HMAC, RSA, and DSA.
@@ -39,7 +41,7 @@ public class SignerTest extends TestCase {
   private static final Logger LOG = Logger.getLogger(SignerTest.class);
   private static final String TEST_DATA = "./testdata";
   private String input = "This is some test data";
-  private byte[] inputBytes = input.getBytes();
+  private byte[] inputBytes = input.getBytes(Util.UTF_8);
 
   private final void testSignerVerify(String subDir) throws Exception {
     Signer signer = new Signer(TEST_DATA + subDir);
@@ -189,7 +191,7 @@ public class SignerTest extends TestCase {
     byte[] sig = hmacSigner.sign(inputBytes);
 
     // Another input string should not verify
-    assertFalse(hmacSigner.verify("Some other string".getBytes(), sig));
+    assertFalse(hmacSigner.verify("Some other string".getBytes(Util.UTF_8), sig));
 
     try {
       hmacSigner.verify(inputBytes, new byte[0]);
