@@ -20,6 +20,7 @@ import org.keyczar.annotations.Experimental;
 import org.keyczar.exceptions.Base64DecodingException;
 import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.util.Base64Coder;
+import org.keyczar.util.Util;
 
 /**
  * Perform a signed session based decryption.
@@ -46,7 +47,7 @@ public class SignedSessionDecrypter {
     
     // decode & decrypt session
     byte[] decoded = Base64Coder.decodeWebSafe(session);
-    String sessionString = new String(crypter.decrypt(decoded));
+    String sessionString = new String(crypter.decrypt(decoded), Util.UTF_8);
     this.session = SessionMaterial.read(sessionString);
   }
   

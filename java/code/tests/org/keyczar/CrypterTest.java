@@ -28,6 +28,7 @@ import org.keyczar.exceptions.KeyNotFoundException;
 import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.exceptions.ShortCiphertextException;
 import org.keyczar.interfaces.KeyczarReader;
+import org.keyczar.util.Util;
 
 /**
  * Tests Crypter class for encrypting and decrypting with RSA and AES. 
@@ -132,7 +133,7 @@ public class CrypterTest extends TestCase {
     } catch (ShortCiphertextException e) {
       // Expected exception
     }
-    byte[] ciphertext = crypter.encrypt(input.getBytes());
+    byte[] ciphertext = crypter.encrypt(input.getBytes(Util.UTF_8));
     // Munge the ciphertext
     ciphertext[1] ^= 44;
     try {

@@ -8,9 +8,10 @@ import org.keyczar.i18n.Messages;
 import org.keyczar.interfaces.KeyType;
 import org.keyczar.interfaces.KeyczarReader;
 import org.keyczar.keyparams.KeyParameters;
+import org.keyczar.util.Util;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
@@ -306,9 +307,12 @@ public class GenericKeyczar extends Keyczar {
       throws KeyczarException {
     File outputFile = new File(location);
     try {
-      FileWriter writer = new FileWriter(outputFile);
-      writer.write(data);
-      writer.close();
+      FileOutputStream fos = new FileOutputStream(outputFile);
+      try {
+        fos.write(data.getBytes(Util.UTF_8));
+      } finally {
+        fos.close();
+      }
     } catch (IOException e) {
       throw new KeyczarException(
           Messages.getString("KeyczarTool.UnableToWrite",

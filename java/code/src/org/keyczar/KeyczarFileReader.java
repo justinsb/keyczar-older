@@ -72,7 +72,7 @@ public class KeyczarFileReader implements KeyczarReader {
       FileInputStream fis = new FileInputStream(file);
       try {
         byte[] contents = Util.readStreamFully(fis);
-        return new String(contents);
+        return new String(contents, Util.UTF_8);
       } finally {
         fis.close();
       }

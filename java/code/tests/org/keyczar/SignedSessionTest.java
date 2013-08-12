@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.keyczar.annotations.Experimental;
 import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.util.Base64Coder;
+import org.keyczar.util.Util;
 
 /**
  * Tests signed session encryption and decryption
@@ -65,7 +66,7 @@ public class SignedSessionTest extends TestCase {
     LOG.debug(String.format("Encoded session material: %s", sessionMaterialString));
 
     // perform encryption
-    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes());
+    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes(Util.UTF_8));
     String ciphertextString = Base64Coder.encodeWebSafe(ciphertext);
     LOG.debug(String.format("Encoded ciphertext: %s", ciphertextString));
 
@@ -73,7 +74,7 @@ public class SignedSessionTest extends TestCase {
     sessionDecrypter =
         new SignedSessionDecrypter(privateKeyDecrypter, publicKeyVerifier, sessionMaterialString);
     byte[] plaintext = sessionDecrypter.decrypt(ciphertext);
-    String decrypted = new String(plaintext);
+    String decrypted = new String(plaintext, Util.UTF_8);
     assertEquals(input, decrypted);
 
     // Try encrypting a bigger input under the same session key
@@ -95,7 +96,7 @@ public class SignedSessionTest extends TestCase {
     LOG.debug(String.format("Encoded session material: %s", sessionMaterialString));
 
     // perform encryption
-    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes());
+    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes(Util.UTF_8));
     String ciphertextString = Base64Coder.encodeWebSafe(ciphertext);
     LOG.debug(String.format("Encoded ciphertext: %s", ciphertextString));
 
@@ -103,7 +104,7 @@ public class SignedSessionTest extends TestCase {
     sessionDecrypter =
         new SignedSessionDecrypter(privateKeyDecrypter, publicKeyVerifier, sessionMaterialString);
     byte[] plaintext = sessionDecrypter.decrypt(ciphertext);
-    String decrypted = new String(plaintext);
+    String decrypted = new String(plaintext, Util.UTF_8);
     assertEquals(input, decrypted);
 
     // Try encrypting a bigger input under the same session key
@@ -127,7 +128,7 @@ public class SignedSessionTest extends TestCase {
     sessionDecrypter =
         new SignedSessionDecrypter(privateKeyDecrypter, publicKeyVerifier, sessionMaterialString);
     byte[] plaintext = sessionDecrypter.decrypt(sessionCiphertext);
-    String decrypted = new String(plaintext);
+    String decrypted = new String(plaintext, Util.UTF_8);
     assertEquals(input, decrypted);
   }
 
@@ -135,7 +136,7 @@ public class SignedSessionTest extends TestCase {
   public final void testWrongSession() throws KeyczarException {
     // gen a new session, to work with offsetting sessions.
     sessionEncrypter.newSession();
-    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes());
+    byte[] ciphertext = sessionEncrypter.encrypt(input.getBytes(Util.UTF_8));
 
     // Instantiate a new hybrid encrypter
     String newSessionMaterialString = sessionEncrypter.newSession();
