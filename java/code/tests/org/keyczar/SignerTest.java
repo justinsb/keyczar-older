@@ -28,6 +28,7 @@ import org.keyczar.exceptions.BadVersionException;
 import org.keyczar.exceptions.KeyNotFoundException;
 import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.exceptions.ShortSignatureException;
+import org.keyczar.Signer;
 import org.keyczar.util.Util;
 
 /**
