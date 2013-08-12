@@ -23,6 +23,7 @@ import org.keyczar.util.Util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -59,6 +60,12 @@ public class KeyczarFileReader implements KeyczarReader {
     return readFile(location + META_FILE);
   }
 
+  public boolean hasMetadata() {
+    String filename = location + META_FILE;
+    File metaFile = new File(filename);
+    return metaFile.exists();
+  }
+
   private String readFile(String filename) throws KeyczarException {
     try {
       File file = new File(filename);
@@ -73,5 +80,30 @@ public class KeyczarFileReader implements KeyczarReader {
       throw new KeyczarException(
           Messages.getString("KeyczarFileReader.FileError", filename), e);
     }
+  }
+
+  protected void writeFile(String data, String location)
+      throws KeyczarException {
+    File outputFile = new File(location);
+    try {
+      FileOutputStream writer = new FileOutputStream(outputFile);
+      try {
+        writer.write(data.getBytes(Util.UTF_8));
+      } finally {
+        writer.close();
+      }
+    } catch (IOException e) {
+      throw new KeyczarException(Messages.getString(
+          "KeyczarTool.UnableToWrite", outputFile.toString()), e);
+    }
+  }
+
+  public static GenericKeyczar create(KeyczarFileReader reader, KeyMetadata kmd)
+      throws KeyczarException {
+    byte[] bytes = kmd.toString().getBytes(Util.UTF_8);
+    reader.writeFile(kmd.toString(), reader.location + META_FILE);
+
+    GenericKeyczar keyczar = new GenericKeyczar(reader);
+    return keyczar;
   }
 }
