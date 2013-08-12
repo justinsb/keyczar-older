@@ -211,7 +211,7 @@ public class GenericKeyczar extends Keyczar {
    * @param destination String pathname of directory to export key set to
    * @throws KeyczarException if unable to export key set.
    */
-  void publicKeyExport(String destination) throws KeyczarException {
+  protected void publicKeyExport(String destination) throws KeyczarException {
     if (destination != null && !destination.endsWith(File.separator)) {
       destination += File.separator;
     }
@@ -268,7 +268,7 @@ public class GenericKeyczar extends Keyczar {
    * @param location String pathname of directory to write to
    * @throws KeyczarException if unable to write to given location.
    */
-  void write(String location) throws KeyczarException {
+  public void write(String location) throws KeyczarException {
     writeFile(kmd.toString(), location
         + KeyczarFileReader.META_FILE);
     for (KeyVersion version : getVersions()) {
@@ -284,7 +284,7 @@ public class GenericKeyczar extends Keyczar {
    * @param encrypter The encrypter object used to encrypt keys
    * @throws KeyczarException If unable to write to a given location
    */
-  void writeEncrypted(String location, Encrypter encrypter)
+  public void writeEncrypted(String location, Encrypter encrypter)
       throws KeyczarException {
     KeyMetadata kmd = getMetadata();
     kmd.setEncrypted(true);
@@ -302,7 +302,7 @@ public class GenericKeyczar extends Keyczar {
    * @param location String pathname of destination file
    * @throws KeyczarException if unable to write to file.
    */
-  void writeFile(String data, String location)
+  protected void writeFile(String data, String location)
       throws KeyczarException {
     File outputFile = new File(location);
     try {
