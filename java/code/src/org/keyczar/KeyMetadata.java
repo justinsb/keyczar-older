@@ -146,13 +146,21 @@ public class KeyMetadata {
   }
 
   public KeyVersion getPrimaryVersion() throws NoPrimaryKeyException {
+    KeyVersion primaryVersion = findPrimaryVersion();
+    if (primaryVersion == null) {
+      throw new NoPrimaryKeyException();
+    }
+    return primaryVersion;
+  }
+
+  public KeyVersion findPrimaryVersion() {
     for (KeyVersion version : versions) {
       if (version.getStatus() == KeyStatus.PRIMARY) {
-	    return version;
-	  }
+        return version;
+      }
     }
-		
-    throw new NoPrimaryKeyException();
+
+    return null;
   }
 
   /**

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -51,6 +52,8 @@ public class Util {
   private static final ConcurrentLinkedQueue<SecureRandom> RAND_QUEUE =
     new ConcurrentLinkedQueue<SecureRandom>();
   private static final int READ_BUF_SIZE = 8192;
+
+  public static final Charset UTF_8 = Charset.forName("UTF-8");
 
   private Util() {
     // Don't new me.
