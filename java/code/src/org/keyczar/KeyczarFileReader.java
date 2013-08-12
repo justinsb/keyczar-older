@@ -97,7 +97,6 @@ public class KeyczarFileReader implements KeyczarReader {
 
   public static GenericKeyczar create(KeyczarFileReader reader, KeyMetadata kmd)
       throws KeyczarException {
-    byte[] bytes = kmd.toString().getBytes(Util.UTF_8);
     reader.writeFile(kmd.toString(), reader.location + META_FILE);
 
     GenericKeyczar keyczar = new GenericKeyczar(reader);
