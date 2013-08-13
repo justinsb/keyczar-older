@@ -1,3 +1,10 @@
 language: java
-before_script:
+jdk:
+  - openjdk6
+  - openjdk7
+  - oraclejdk7
+install: 
   - cd java/code
+  - mvn install -DskipTests=true -q
+script:
+  - mvn test
