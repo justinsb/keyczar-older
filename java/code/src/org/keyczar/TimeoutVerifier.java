@@ -24,7 +24,6 @@ import org.keyczar.util.Clock;
 import org.keyczar.util.SystemClock;
 import org.keyczar.util.Util;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 /**
@@ -100,12 +99,8 @@ public class TimeoutVerifier {
    * occurs.
    */
   public boolean verify(String data, String signature) throws KeyczarException {
-    try {
-      return verify(data.getBytes(Keyczar.DEFAULT_ENCODING),
-          Base64Coder.decodeWebSafe(signature));
-    } catch (UnsupportedEncodingException e) {
-      throw new KeyczarException(e);
-    }
+    return verify(data.getBytes(Util.UTF_8),
+        Base64Coder.decodeWebSafe(signature));
   }
 
   /**
