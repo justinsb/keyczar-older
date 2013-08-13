@@ -26,6 +26,7 @@ import org.keyczar.i18n.Messages;
 import org.keyczar.interfaces.KeyType;
 import org.keyczar.interfaces.KeyczarReader;
 import org.keyczar.keyparams.KeyParameters;
+import org.keyczar.util.Util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -349,7 +350,7 @@ public class KeyczarTool {
       }
       try {
         FileOutputStream metaOutput = new FileOutputStream(file);
-        metaOutput.write(kmd.toString().getBytes(Keyczar.DEFAULT_ENCODING));
+        metaOutput.write(kmd.toString().getBytes(Util.UTF_8));
         metaOutput.close();
       } catch (IOException e) {
         throw new KeyczarException(Messages.getString(

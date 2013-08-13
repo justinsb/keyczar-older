@@ -36,7 +36,6 @@ import java.util.HashMap;
  */
 public abstract class Keyczar {
   private static final Logger LOG = Logger.getLogger(Keyczar.class);
-  public static final String DEFAULT_ENCODING = "UTF-8";
   public static final byte FORMAT_VERSION = 0;
   public static final byte[] FORMAT_BYTES = { FORMAT_VERSION };
   public static final int KEY_HASH_SIZE = 4;

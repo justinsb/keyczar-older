@@ -23,8 +23,8 @@ import org.keyczar.i18n.Messages;
 import org.keyczar.interfaces.KeyczarReader;
 import org.keyczar.interfaces.VerifyingStream;
 import org.keyczar.util.Base64Coder;
+import org.keyczar.util.Util;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 /**
@@ -135,12 +135,7 @@ public class UnversionedVerifier extends Keyczar {
    * occurs.
    */
   public boolean verify(String data, String signature) throws KeyczarException {
-    try {
-      return verify(data.getBytes(Keyczar.DEFAULT_ENCODING),
-          Base64Coder.decodeWebSafe(signature));
-    } catch (UnsupportedEncodingException e) {
-      throw new KeyczarException(e);
-    }
+    return verify(data.getBytes(Util.UTF_8), Base64Coder.decodeWebSafe(signature));
   }
 
   @Override

@@ -25,8 +25,8 @@ import org.keyczar.i18n.Messages;
 import org.keyczar.interfaces.KeyczarReader;
 import org.keyczar.interfaces.SigningStream;
 import org.keyczar.util.Base64Coder;
+import org.keyczar.util.Util;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 /**
@@ -153,11 +153,7 @@ public class UnversionedSigner extends UnversionedVerifier {
    * @throws KeyczarException
    */
   public String sign(String input) throws KeyczarException {
-    try {
-      return Base64Coder.encodeWebSafe(sign(input.getBytes(Keyczar.DEFAULT_ENCODING)));
-    } catch (UnsupportedEncodingException e) {
-      throw new KeyczarException(e);
-    }
+    return Base64Coder.encodeWebSafe(sign(input.getBytes(Util.UTF_8)));
   }
 
   @Override
