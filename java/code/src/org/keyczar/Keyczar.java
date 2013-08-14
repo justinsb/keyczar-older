@@ -47,6 +47,7 @@ public abstract class Keyczar {
     new HashMap<KeyVersion, KeyczarKey>();
   final HashMap<KeyHash, KeyczarKey> hashMap =
     new HashMap<KeyHash, KeyczarKey>(); // keep track of used hash identifiers
+  final KeyczarReader reader;
 
   private class KeyHash {
     private byte[] data;
@@ -76,6 +77,8 @@ public abstract class Keyczar {
    * @throws KeyczarException
    */
   public Keyczar(KeyczarReader reader) throws KeyczarException {
+    this.reader = reader;
+
     // Reads keys from the KeyczarReader
     kmd = KeyMetadata.read(reader.getMetadata());
     if (!isAcceptablePurpose(kmd.getPurpose())) {
@@ -132,7 +135,7 @@ public abstract class Keyczar {
     kmd.addVersion(version);
   }
 
-  KeyczarKey getPrimaryKey() {
+  public KeyczarKey getPrimaryKey() {
     if (primaryVersion == null) {
       return null;
     }
@@ -150,4 +153,8 @@ public abstract class Keyczar {
    * @return true if the purpose is acceptable, false otherwise.
    */
   abstract boolean isAcceptablePurpose(KeyPurpose purpose);
+  
+  protected KeyczarReader getReader() {
+    return reader;
+  }
 }

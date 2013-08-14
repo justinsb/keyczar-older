@@ -209,7 +209,7 @@ public class GenericKeyczar extends Keyczar {
    * @param destination String pathname of directory to export key set to
    * @throws KeyczarException if unable to export key set.
    */
-  protected void publicKeyExport(KeyczarWriter destination) throws KeyczarException {
+  public void publicKeyExport(KeyczarWriter destination) throws KeyczarException {
     KeyMetadata kmd = getMetadata();
     // Can only export if type is DSA_PRIV and purpose is SIGN_AND_VERIFY
     KeyMetadata publicKmd = null;
@@ -266,6 +266,15 @@ public class GenericKeyczar extends Keyczar {
       location.setKey(version.getVersionNumber(), getKey(version).toString());
     }
     location.setMetadata(kmd.toString());
+  }
+  
+  public void write() throws KeyczarException {
+    KeyczarReader reader = getReader();
+    if (reader instanceof KeyczarWriter) {
+      write((KeyczarWriter) reader);
+    } else {
+      throw new KeyczarException("Not initialized with a writer");
+    }
   }
 
   public static GenericKeyczar create(KeyczarWriter store, KeyMetadata kmd)
