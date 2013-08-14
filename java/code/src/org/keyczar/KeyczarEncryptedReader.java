@@ -44,12 +44,19 @@ public class KeyczarEncryptedReader implements EncryptedReader {
   
   @Override
   public String getKey() throws KeyczarException {
-	String encrypted = reader.getKey();
-	return crypter.decrypt(encrypted);
+    if (crypter == null) {
+      throw new KeyczarException("Decryption not configured");
+    }
+
+    String encrypted = reader.getKey();
+    return crypter.decrypt(encrypted);
   }
 
   @Override
   public String getKey(int version) throws KeyczarException {
+    if (crypter == null) {
+      throw new KeyczarException("Decryption not configured");
+    }
     return crypter.decrypt(reader.getKey(version));
   }
 

@@ -255,7 +255,7 @@ public class KeyczarTool {
             Messages.getString("KeyczarTool.UnsupportedPurpose",
                 genericKeyczar.getMetadata().getPurpose()));
     }
-    genericKeyczar.writeFile(answer, destinationFlag);
+    KeyczarFileReader.writeFile(answer, new File(destinationFlag));
   }
 
   /**
@@ -415,7 +415,7 @@ public class KeyczarTool {
           Messages.getString("KeyczarTool.MustDefineDestination"));
     }
     GenericKeyczar genericKeyczar = createGenericKeyczar(locationFlag);
-    genericKeyczar.publicKeyExport(destinationFlag);
+    genericKeyczar.publicKeyExport(new KeyczarFileReader(destinationFlag));
   }
 
   /**
@@ -505,9 +505,9 @@ public class KeyczarTool {
         mock.setKey(version.getVersionNumber(), genericKeyczar.getKey(version));
       } // update key data
     } else if (crypterFlag != null) {
-      genericKeyczar.writeEncrypted(locationFlag, new Encrypter(crypterFlag));
+      genericKeyczar.write(new KeyczarEncryptedWriter(new KeyczarFileReader(locationFlag), null, new Encrypter(crypterFlag)));
     } else {
-      genericKeyczar.write(locationFlag);
+      genericKeyczar.write(new KeyczarFileReader(locationFlag));
     }
   }
 }

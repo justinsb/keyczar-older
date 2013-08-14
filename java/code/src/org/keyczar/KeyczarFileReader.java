@@ -19,6 +19,7 @@ package org.keyczar;
 import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.i18n.Messages;
 import org.keyczar.interfaces.KeyczarReader;
+import org.keyczar.interfaces.KeyczarWriter;
 import org.keyczar.util.Util;
 
 import java.io.File;
@@ -32,7 +33,7 @@ import java.io.IOException;
  * @author steveweis@gmail.com (Steve Weis)
  *
  */
-public class KeyczarFileReader implements KeyczarReader {
+public class KeyczarFileReader implements KeyczarReader, KeyczarWriter {
   private String location;
   static final String META_FILE = "meta";
 
@@ -77,20 +78,26 @@ public class KeyczarFileReader implements KeyczarReader {
         fis.close();
       }
     } catch (IOException e) {
-      throw new KeyczarException(
-          Messages.getString("KeyczarFileReader.FileError", filename), e);
+      throw new KeyczarException(Messages.getString(
+          "KeyczarFileReader.FileError", filename), e);
     }
   }
 
-  protected void writeFile(String data, String location)
+  /**
+   * Utility function to write given data to a file at given location.
+   *
+   * @param data String data to be written
+   * @param location String pathname of destination file
+   * @throws KeyczarException if unable to write to file.
+   */
+  public static void writeFile(String data, File outputFile)
       throws KeyczarException {
-    File outputFile = new File(location);
     try {
-      FileOutputStream writer = new FileOutputStream(outputFile);
+      FileOutputStream fos = new FileOutputStream(outputFile);
       try {
-        writer.write(data.getBytes(Util.UTF_8));
+        fos.write(data.getBytes(Util.UTF_8));
       } finally {
-        writer.close();
+        fos.close();
       }
     } catch (IOException e) {
       throw new KeyczarException(Messages.getString(
@@ -98,12 +105,15 @@ public class KeyczarFileReader implements KeyczarReader {
     }
   }
 
-  public static GenericKeyczar create(KeyczarFileReader reader, KeyMetadata kmd)
-      throws KeyczarException {
-    byte[] bytes = kmd.toString().getBytes(Util.UTF_8);
-    reader.writeFile(kmd.toString(), reader.location + META_FILE);
+  @Override
+  public void setMetadata(String metadata) throws KeyczarException {
+    File file = new File(this.location, KeyczarFileReader.META_FILE);
+    writeFile(metadata, file);
+  }
 
-    GenericKeyczar keyczar = new GenericKeyczar(reader);
-    return keyczar;
+  @Override
+  public void setKey(int versionNumber, String key) throws KeyczarException {
+    File file = new File(this.location, Integer.toString(versionNumber));
+    writeFile(key, file);
   }
 }

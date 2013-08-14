@@ -7,12 +7,9 @@ import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.i18n.Messages;
 import org.keyczar.interfaces.KeyType;
 import org.keyczar.interfaces.KeyczarReader;
+import org.keyczar.interfaces.KeyczarWriter;
 import org.keyczar.keyparams.KeyParameters;
-import org.keyczar.util.Util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -212,10 +209,7 @@ public class GenericKeyczar extends Keyczar {
    * @param destination String pathname of directory to export key set to
    * @throws KeyczarException if unable to export key set.
    */
-  protected void publicKeyExport(String destination) throws KeyczarException {
-    if (destination != null && !destination.endsWith(File.separator)) {
-      destination += File.separator;
-    }
+  protected void publicKeyExport(KeyczarWriter destination) throws KeyczarException {
     KeyMetadata kmd = getMetadata();
     // Can only export if type is DSA_PRIV and purpose is SIGN_AND_VERIFY
     KeyMetadata publicKmd = null;
@@ -246,16 +240,14 @@ public class GenericKeyczar extends Keyczar {
       KeyczarKey publicKey =
         ((KeyczarPrivateKey) getKey(version)).getPublic();
       if (KeyczarTool.getMock() == null) {
-        writeFile(publicKey.toString(), destination
-            + version.getVersionNumber());
+        destination.setKey(version.getVersionNumber(), publicKey.toString());
       } else { // for testing, update mock object
         KeyczarTool.getMock().setPublicKey(version.getVersionNumber(), publicKey);
       }
       publicKmd.addVersion(version);
     }
     if (KeyczarTool.getMock() == null) {
-      writeFile(publicKmd.toString(), destination
-          + KeyczarFileReader.META_FILE);
+      destination.setMetadata(publicKmd.toString());
     } else { // for testing, update mock public kmd
       KeyczarTool.getMock().setPublicKeyMetadata(publicKmd);
     }
@@ -269,54 +261,18 @@ public class GenericKeyczar extends Keyczar {
    * @param location String pathname of directory to write to
    * @throws KeyczarException if unable to write to given location.
    */
-  public void write(String location) throws KeyczarException {
+  public void write(KeyczarWriter location) throws KeyczarException {
     for (KeyVersion version : getVersions()) {
-      writeFile(getKey(version).toString(), location
-          + version.getVersionNumber());
+      location.setKey(version.getVersionNumber(), getKey(version).toString());
     }
-    writeFile(kmd.toString(), location
-        + KeyczarFileReader.META_FILE);
+    location.setMetadata(kmd.toString());
   }
 
-  /**
-   * Encrypts the key files before writing them out to disk
-   *
-   * @param location Location of key set
-   * @param encrypter The encrypter object used to encrypt keys
-   * @throws KeyczarException If unable to write to a given location
-   */
-  public void writeEncrypted(String location, Encrypter encrypter)
+  public static GenericKeyczar create(KeyczarWriter store, KeyMetadata kmd)
       throws KeyczarException {
-    KeyMetadata kmd = getMetadata();
-    kmd.setEncrypted(true);
-    for (KeyVersion version : getVersions()) {
-      writeFile(encrypter.encrypt(getKey(version).toString()), location
-          + version.getVersionNumber());
-    }
-    writeFile(kmd.toString(), location + KeyczarFileReader.META_FILE);
-  }
+    store.setMetadata(kmd.toString());
 
-  /**
-   * Utility function to write given data to a file at given location.
-   *
-   * @param data String data to be written
-   * @param location String pathname of destination file
-   * @throws KeyczarException if unable to write to file.
-   */
-  protected void writeFile(String data, String location)
-      throws KeyczarException {
-    File outputFile = new File(location);
-    try {
-      FileOutputStream fos = new FileOutputStream(outputFile);
-      try {
-        fos.write(data.getBytes(Util.UTF_8));
-      } finally {
-        fos.close();
-      }
-    } catch (IOException e) {
-      throw new KeyczarException(
-          Messages.getString("KeyczarTool.UnableToWrite",
-              outputFile.toString()), e);
-    }
+    GenericKeyczar keyczar = new GenericKeyczar(store);
+    return keyczar;
   }
 }
