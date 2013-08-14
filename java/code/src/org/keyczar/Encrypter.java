@@ -25,8 +25,8 @@ import org.keyczar.interfaces.EncryptingStream;
 import org.keyczar.interfaces.KeyczarReader;
 import org.keyczar.interfaces.SigningStream;
 import org.keyczar.util.Base64Coder;
+import org.keyczar.util.Util;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 /**
@@ -182,11 +182,7 @@ public class Encrypter extends Keyczar {
    * not contain a primary encrypting key.
    */
   public String encrypt(String input) throws KeyczarException {
-    try {
-      return Base64Coder.encodeWebSafe(encrypt(input.getBytes(DEFAULT_ENCODING)));
-    } catch (UnsupportedEncodingException e) {
-      throw new KeyczarException(e);
-    }
+    return Base64Coder.encodeWebSafe(encrypt(input.getBytes(Util.UTF_8)));
   }
 
   @Override

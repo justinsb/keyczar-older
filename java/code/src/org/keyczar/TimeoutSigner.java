@@ -19,8 +19,8 @@ package org.keyczar;
 import org.keyczar.exceptions.KeyczarException;
 import org.keyczar.interfaces.KeyczarReader;
 import org.keyczar.util.Base64Coder;
+import org.keyczar.util.Util;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 
 /**
@@ -86,13 +86,8 @@ public class TimeoutSigner extends TimeoutVerifier {
    */
   public String timeoutSign(String input, long expirationTime)
       throws KeyczarException {
-    try {
-      return Base64Coder.encodeWebSafe(timeoutSign(input.getBytes(
-          Keyczar.DEFAULT_ENCODING), expirationTime));
-    } catch (UnsupportedEncodingException e) {
-      throw new KeyczarException(e);
-    }
-   
+    return Base64Coder.encodeWebSafe(timeoutSign(input.getBytes(Util.UTF_8),
+        expirationTime));
   }
 
   /**
