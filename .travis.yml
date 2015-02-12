@@ -3,7 +3,8 @@ jdk:
   - openjdk6
   - openjdk7
   - oraclejdk7
-install: 
+  - oraclejdk8
+install:
   - cd java/code
   - mvn install -DskipTests=true -q
 script:
